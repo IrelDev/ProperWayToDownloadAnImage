@@ -1,2 +1,2 @@
 # ProperWayToDownloadAnImage
-Example of proper image downloading &amp; displaying with swift using operations &amp; caching
+Example of proper image downloading & caching in swift using operations
