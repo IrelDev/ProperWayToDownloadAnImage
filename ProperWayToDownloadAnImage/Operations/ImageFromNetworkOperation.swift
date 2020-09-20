@@ -20,10 +20,10 @@ class ImageFromNetworkOperation: AsynchronousOperation {
     
     override func main() {
         guard let url = URL(string: urlToImage) else { return }
-        urlSessionDataTask = URLSession.shared.dataTask(with: url) { (data, response, error) in
-
-            defer { self.state = .finished }
+        urlSessionDataTask = URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+            guard let self = self else { return }
             
+            defer { self.state = .finished }
             guard !self.isCancelled else { return }
             
             guard error == nil, let data = data, let image = UIImage(data: data) else { return }
