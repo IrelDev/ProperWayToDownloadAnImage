@@ -8,7 +8,7 @@
 import UIKit
 
 class ViewController: UIViewController {
-    let imagesCount = 9
+    let imagesCount = 15
     var runningOperations: [IndexPath: Operation] = [:]
     
     let tableView = UITableView()
@@ -19,7 +19,7 @@ class ViewController: UIViewController {
         setupView()
     }
     func buildURL(with id: Int) -> String {
-        "https://lorempixel.com/1000/1000/abstract/\(id)/"
+        "https://picsum.photos/id/\(id)/400/400.jpg"
     }
 }
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
@@ -62,8 +62,16 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     private func imageToCache(data: Data, response: URLResponse) {
         guard let responseURL = response.url else { return }
+        //This part is needed only for demo demonstration, delete it to work with your URLs
+        var components = URLComponents(url: responseURL, resolvingAgainstBaseURL: true)
+        components?.query = nil
+        components?.host = "picsum.photos"
+        
+        guard let url = components?.url else { return }
+        //End of part
+        
         let cachedResponse = CachedURLResponse(response: response, data: data)
-        URLCache.shared.storeCachedResponse(cachedResponse, for: URLRequest(url: responseURL))
+        URLCache.shared.storeCachedResponse(cachedResponse, for: URLRequest(url: url))//replace url with responseURL
     }
 }
 extension ViewController {
