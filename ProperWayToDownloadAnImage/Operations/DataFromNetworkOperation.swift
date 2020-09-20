@@ -1,5 +1,5 @@
 //
-//  ImageFromNetworkOperation.swift
+//  DataFromNetworkOperation.swift
 //  ProperWayToDownloadAnImage
 //
 //  Created by Kirill Pustovalov on 19.09.2020.
@@ -7,28 +7,28 @@
 
 import UIKit
 
-class ImageFromNetworkOperation: AsynchronousOperation {
-    var urlToImage: String
-    let completion: (UIImage) -> Void
+class DataFromNetworkOperation: AsynchronousOperation {
+    var urlToImage: URL
+    let completion: (Data, URLResponse) -> Void
     
     var urlSessionDataTask: URLSessionDataTask?
     
-    init(urlToImage: String, completion: @escaping (UIImage) -> Void) {
+    init(urlToImage: URL, completion: @escaping (Data, URLResponse) -> Void) {
         self.urlToImage = urlToImage
         self.completion = completion
     }
     
     override func main() {
-        guard let url = URL(string: urlToImage) else { return }
-        urlSessionDataTask = URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+        urlSessionDataTask = URLSession.shared.dataTask(with: urlToImage) { [weak self] (data, response, error) in
             guard let self = self else { return }
             
             defer { self.state = .finished }
             guard !self.isCancelled else { return }
             
-            guard error == nil, let data = data, let image = UIImage(data: data) else { return }
+            guard error == nil else { return }
+            guard let data = data, let response = response else { return }
             
-            self.completion(image)
+            self.completion(data, response)
         }
         urlSessionDataTask?.resume()
     }
